@@ -1,31 +1,128 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.7.34031.279
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Program 2 - Managing Books", "Program 2 - Managing Books.vcxproj", "{C9F37A57-EE17-44E2-A47A-E73516FB25C8}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
-		Release|x64 = Release|x64
-		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C9F37A57-EE17-44E2-A47A-E73516FB25C8}.Debug|x64.ActiveCfg = Debug|x64
-		{C9F37A57-EE17-44E2-A47A-E73516FB25C8}.Debug|x64.Build.0 = Debug|x64
-		{C9F37A57-EE17-44E2-A47A-E73516FB25C8}.Debug|x86.ActiveCfg = Debug|Win32
-		{C9F37A57-EE17-44E2-A47A-E73516FB25C8}.Debug|x86.Build.0 = Debug|Win32
-		{C9F37A57-EE17-44E2-A47A-E73516FB25C8}.Release|x64.ActiveCfg = Release|x64
-		{C9F37A57-EE17-44E2-A47A-E73516FB25C8}.Release|x64.Build.0 = Release|x64
-		{C9F37A57-EE17-44E2-A47A-E73516FB25C8}.Release|x86.ActiveCfg = Release|Win32
-		{C9F37A57-EE17-44E2-A47A-E73516FB25C8}.Release|x86.Build.0 = Release|Win32
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {A98D6E6A-DB55-4E1C-AE09-7C46220467E3}
-	EndGlobalSection
-EndGlobal
+#include "Program 2 - Managing Books.h"
+#include <iostream>
+#include <string>
+using namespace std;
+
+
+//Below functions are defined outside the class so that they can be called independently in main() without the need of an instance/object
+void populateBookArray(Book library[])
+{
+	library[0].setAuthor("JK Rowling");
+	library[0].setTitle("Harry Potter and the Sorcerers Stone");
+	library[0].setISBN(98346);
+
+	library[1].setAuthor("C.S. Lewis");
+	library[1].setTitle("The Lion, the Witch, and the Wardrobe");
+	library[1].setISBN(45336);
+
+	library[2].setAuthor("E. B. White");
+	library[2].setTitle("Charlotte's Web");
+	library[2].setISBN(56432);
+
+	library[3].setAuthor("F. Scott Fitzgerald");
+	library[3].setTitle("The Great Gasby");
+	library[3].setISBN(11934);
+
+	library[4].setAuthor("S. E. Hinton");
+	library[4].setTitle("The Outsiders");
+	library[4].setISBN(72331);
+}
+
+
+
+//Asks the user for the ISBN number of the book and searches the library for that book. If found, returns the book element's index, if not found, returns -1.
+int lookupByISBN(Book library[], int SIZE, int user_ISBN)
+{
+	for (int i = 0; i < SIZE; i++)
+	{
+		if (user_ISBN == library[i].getISBN())
+			return i; //book whose ISBN is searched by user is found in the library - 'i' denotes the index of that book in the library
+	}
+	return -1; //book whose ISBN is searched by user is NOT found in the library
+}
+
+
+
+int main()
+{
+	int book_num;
+	int user_ISBN;
+	const int SIZE = 5;
+	Book library[SIZE]; //defining the array 'library' of type 'Book' having 'SIZE' number of indices
+	populateBookArray(library); //filling the array 'library' with the values given in 'populateBookArray' function
+	bool exitloop = false;
+
+	while (exitloop == false){
+		int choice;
+		cout << "Dear Customer! " << endl << '\t' <<
+					"1. CHECK OUT a book" << endl << '\t' <<
+				    "2. RETURN a book" << endl << '\t' <<
+					"3. LIST all books" << endl << '\t' <<
+					"4. QUIT: " << endl << 
+			"Enter your choice: ";
+		cin >> choice;
+		cout << endl;
+
+		switch (choice) {
+
+
+		case 1:  //Check Out A Book
+
+			cout << "Enter the ISBN of the book you wanna checkout? ";
+			cin >> user_ISBN;
+			book_num = lookupByISBN(library, SIZE, user_ISBN);
+
+			if (book_num == -1) {
+				cout << "Book is NOT found! Please, enter a VALID ISBN." << endl;
+			}
+			else {
+				library[book_num].checkOutBook();
+			}
+			break;
+
+
+		case 2: // Return a book
+
+			cout << "Enter the ISBN of the book to be returned: ";
+			cin >> user_ISBN;
+
+			book_num = lookupByISBN(library, SIZE, user_ISBN);
+
+			if (book_num != -1) {
+				library[book_num].returnBook();
+				cout << "Great! The book is returned." << endl;
+			}
+			else {
+				cout << "Book is NOT found! Please, enter a VALID ISBN." << endl;
+			}
+			cout << endl;
+			break;
+
+
+		case 3: //LIST ALL BOOKS IN THE LIBRARY
+
+			cout << "Details of those books that are available in the library now: " << endl;
+			
+			for (int i = 0; i < SIZE; i++) {
+				int return_num = library[i].outputBook();
+
+				if (return_num == 1)
+					cout << "Book Number " << i + 1 << endl << endl;
+			}
+			break;
+
+
+		case 4: //QUIT the program
+			cout << "Program STOPS!" << endl;
+			exitloop = true;
+			break;
+
+
+		default: //UNACCEPTABLE RESPONSE FROM THE USER
+			cout << "INVALID Choice! Please enter a valid option." << endl;
+		
+		cout << endl;
+		}
+	}
+	return 0;
+}
