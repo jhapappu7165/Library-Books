@@ -3,6 +3,76 @@
 #include <string>
 using namespace std;
 
+#pragma once
+
+class Book {
+
+private:
+	string title;
+	string author;
+	int ISBN;
+	bool status = false; //false = book available in the library low; true - book checked out from the library
+	string checkedOutBy = "";
+
+public:
+	string getTitle() {
+		return (title);
+	}
+	string getAuthor() {
+		return (author);
+	}
+	int getISBN() {
+		return ISBN;
+	}
+	bool getStatus() {
+		return status;
+	}
+	string getCheckedOutBy() {
+		return checkedOutBy;
+	}
+	void setTitle(string n_title) {
+		title = n_title;
+	}
+	void setAuthor(string n_author) {
+		author = n_author;
+	}
+	void setISBN(int n_ISBN) {
+		ISBN = n_ISBN;
+	}
+
+	void checkOutBook() {
+		if (status == false) { //if book is available in the library
+
+			string name;
+			cout << "Dear Customer, What is your (first + last) name: ";
+			cin.ignore();
+			getline(cin, name);
+
+			status = true; //this particular book is NOT available for another person now
+			cout << "Congratulations! This Book is checked out by " << name << endl;
+		}
+		else {//if book NOT available
+			cout << "Oops! This Book is already checked out." << endl;
+		}
+		cout << endl;
+	}
+
+	void returnBook() {
+		status = false; // set 'status' to 'false' for that book which is returned back - library[i].returnBook() specifies one particular book
+		checkedOutBy = ""; //when returned, none has checked out the book
+	}
+
+	int outputBook() {
+		if (status == false) { //output only those books that are available in the library now 
+			cout << '\t' << "- AUTHOR = " << author << endl;
+			cout << '\t' << "- TITLE = " << title << endl;
+			cout << '\t' << "- ISBN = " << ISBN << endl;
+			return 1;
+		}
+		return -1;
+	}
+};
+
 
 //Below functions are defined outside the class so that they can be called independently in main() without the need of an instance/object
 void populateBookArray(Book library[])
